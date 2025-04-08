@@ -1,0 +1,101 @@
+Name,Cuisine Type,Rating,Opening Time,Closing Time,Avg Cost Per Person (₹),Latitude,Longitude,Vegetarian/Vegan Options,Alcohol Availability,Delivery/Takeaway,Ambiance,Payment Methods,Wi-Fi Availability,Live Music,Reservation Requirement,Seating Type,Breakfast,Lunch,Dinner
+The Fisherman's Wharf,Asian,4.0,07:00,23:00,1475,15.651011461425245,74.03060600499474,Yes,Yes,Yes,Beachfront,"Cash, Card, UPI",Yes,No,No,Outdoor,No,Yes,Yes
+Pousada by the Beach,Indian,4.3,08:00,01:00,270,15.435776689575922,73.98714191171719,Yes,Yes,No,Rustic,"Cash, Card",Yes,Yes,No,Both,No,Yes,Yes
+Thalassa,Seafood,3.6,11:00,01:00,761,15.740421887105368,74.05188493828238,Yes,No,Yes,Rooftop,"Cash, Card, UPI",Yes,No,Yes,Both,Yes,Yes,Yes
+Calamari Bathe & Binge,Portuguese,3.6,10:00,23:00,1418,15.368177983621484,73.98940441823537,Yes,Yes,Yes,Fine Dining,"Cash, Card",Yes,No,No,Both,No,Yes,Yes
+Vinayak Family Restaurant,Mexican,3.7,11:00,23:00,1175,15.565183035523809,73.89027264280293,Yes,Yes,Yes,Casual Dining,"Cash, Card, UPI",Yes,Yes,No,Indoor,Yes,Yes,Yes
+Suzie's,Mexican,4.3,11:00,01:00,203,15.228254807248165,73.95358320452402,Yes,Yes,Yes,Casual Dining,Cash Only,No,Yes,Yes,Indoor,No,No,Yes
+A Reverie,Indian,4.0,07:00,01:00,238,15.312964852684201,73.94083094057532,Yes,No,No,Cafe-style,UPI Only,Yes,No,No,Both,No,No,Yes
+Mum's Kitchen,Fusion,3.6,11:00,01:00,373,15.734526194905701,73.79002576523578,Yes,Yes,No,Garden,Cash Only,Yes,No,No,Indoor,Yes,Yes,Yes
+Cafe Al Fresco by Cantina Bodega,Vegetarian,3.7,11:00,22:00,1963,15.766361030258752,74.04223846384318,Yes,No,Yes,Lounge,"Cash, Card",Yes,No,Yes,Outdoor,Yes,No,Yes
+Antares Restaurant & Beach Club,Mexican,4.5,07:00,01:00,1724,15.703335967677997,73.71700501117897,No,Yes,Yes,Beachfront,"Cash, Card",Yes,No,No,Indoor,No,Yes,Yes
+Zeebop by the Sea,Vegetarian,3.7,09:00,23:00,572,15.236556455945122,74.03973074226961,Yes,Yes,Yes,Fine Dining,"Cash, Card",No,No,No,Both,Yes,Yes,Yes
+Spice Goa,Mexican,4.9,08:00,22:00,970,15.253877732232443,73.90313377760613,Yes,No,No,Lounge,"Cash, Card, UPI",No,No,Yes,Outdoor,Yes,Yes,No
+The Black Sheep Bistro,Portuguese,5.0,09:00,23:00,1824,15.620841439689137,74.1999069407703,Yes,Yes,Yes,Casual Dining,Cash Only,Yes,No,No,Indoor,No,Yes,No
+Martin's Corner,Vegetarian,4.4,11:00,00:00,1415,15.543989775697026,74.14682282079005,Yes,Yes,Yes,Casual Dining,"Cash, Card",Yes,No,No,Outdoor,Yes,Yes,Yes
+The Lazy Goose,Italian,3.7,08:00,00:00,1911,15.365204317385627,73.80329063257808,No,No,No,Garden,"Card, UPI",No,No,Yes,Indoor,No,Yes,Yes
+Gunpowder,Mexican,4.1,09:00,01:00,801,15.577321659250403,74.03194176038838,No,No,No,Beachfront,"Card, UPI",Yes,No,No,Indoor,No,Yes,Yes
+Go With The Flow,Continental,3.6,10:00,01:00,686,15.799186404010586,73.88348914085333,Yes,Yes,No,Rustic,"Cash, Card",Yes,No,Yes,Outdoor,No,Yes,Yes
+Tuscany Gardens,Goan,3.6,07:00,22:00,1061,15.29922599729391,73.99276626370293,Yes,Yes,No,Fine Dining,Cash Only,No,No,No,Both,No,Yes,No
+Ritz Classic,Asian,4.7,07:00,23:00,1294,15.723941766760271,74.04580343406464,No,Yes,Yes,Casual Dining,UPI Only,Yes,No,Yes,Outdoor,No,Yes,Yes
+Copperleaf,Asian,3.7,10:00,01:00,1191,15.508106417875867,73.9857770366369,Yes,No,Yes,Rooftop,UPI Only,No,Yes,No,Both,No,Yes,Yes
+The Mango Tree,Continental,4.0,11:00,01:00,1025,15.743909405222611,73.70970248953944,Yes,Yes,Yes,Cafe-style,UPI Only,Yes,No,No,Outdoor,Yes,Yes,Yes
+Bay 15,Vegetarian,4.7,11:00,01:00,1740,15.469273709694116,73.70992856255627,Yes,Yes,No,Lounge,"Cash, Card",Yes,No,Yes,Both,Yes,Yes,Yes
+Britto's,Indian,4.4,07:00,22:00,1229,15.456501786630653,73.97522249011381,Yes,Yes,Yes,Lounge,UPI Only,No,Yes,No,Both,Yes,Yes,Yes
+Mojigao,Italian,4.3,11:00,00:00,733,15.533668037857062,73.90692908346732,Yes,No,Yes,Rooftop,"Cash, Card, UPI",No,No,Yes,Both,Yes,No,Yes
+The Rice Mill,Fusion,3.8,11:00,23:00,1839,15.346244088459292,73.9375958653889,Yes,Yes,No,Casual Dining,"Card, UPI",Yes,No,No,Outdoor,No,Yes,Yes
+Fat Fish,Mexican,3.9,07:00,01:00,956,15.554123714927094,74.00377374107556,Yes,Yes,Yes,Beachfront,UPI Only,Yes,No,Yes,Both,Yes,Yes,Yes
+Purple Martini,Portuguese,4.0,08:00,22:00,450,15.749206494997326,74.19988333868528,Yes,Yes,Yes,Cafe-style,"Cash, Card, UPI",No,No,No,Both,No,Yes,Yes
+Sublime,Asian,4.3,07:00,23:00,1446,15.793339071674582,73.87321243318225,Yes,Yes,No,Rooftop,"Cash, Card, UPI",No,No,Yes,Both,No,Yes,Yes
+Ciao Bella,Asian,4.1,09:00,23:00,876,15.556157565445174,73.9562728341887,Yes,Yes,No,Rooftop,Cash Only,No,Yes,Yes,Both,No,Yes,Yes
+Jardim a Mar,Vegetarian,4.9,10:00,23:00,1978,15.676620236008779,73.99781321642897,No,No,No,Casual Dining,UPI Only,Yes,Yes,Yes,Both,No,No,Yes
+Beach Street Eco Resort,Continental,4.3,10:00,23:00,1114,15.641685882215201,73.84800586949146,Yes,Yes,Yes,Garden,UPI Only,No,Yes,No,Indoor,No,No,Yes
+House of Lloyds,Mexican,3.6,09:00,23:00,634,15.40173980481728,73.80658082706886,Yes,Yes,Yes,Rooftop,"Cash, Card, UPI",Yes,No,No,Both,Yes,Yes,Yes
+Waterfront Terrace & Bar,Asian,3.9,08:00,22:00,885,15.66239040883148,73.72700759039549,Yes,No,Yes,Rooftop,Cash Only,Yes,No,No,Both,No,No,No
+Habanero,Fusion,4.7,08:00,00:00,490,15.715622769383534,74.18055715209152,No,No,No,Rooftop,UPI Only,Yes,No,No,Outdoor,No,Yes,Yes
+Navtara,Mexican,4.8,10:00,00:00,857,15.707050750409191,74.13810264651856,No,Yes,Yes,Cafe-style,"Cash, Card, UPI",Yes,No,No,Both,No,Yes,Yes
+Shamba,Portuguese,4.7,07:00,23:00,508,15.34379010115021,73.92214702300434,Yes,No,No,Lounge,Cash Only,Yes,No,No,Both,Yes,Yes,Yes
+Michael's Corner,Continental,3.8,07:00,22:00,452,15.44296440685015,73.71349411614656,Yes,No,No,Cafe-style,Cash Only,Yes,No,No,Outdoor,Yes,No,Yes
+Black Vanilla,Asian,4.5,10:00,01:00,513,15.317791271710114,73.8040920983094,No,Yes,Yes,Beachfront,"Card, UPI",No,Yes,No,Indoor,No,Yes,Yes
+Artjuna,Mexican,4.5,09:00,00:00,224,15.590876291324127,73.75728889640428,Yes,Yes,No,Cafe-style,Cash Only,No,No,No,Both,No,Yes,Yes
+Anand Sagar,Continental,3.5,11:00,01:00,1748,15.486955070776991,74.05244176267554,Yes,Yes,No,Rooftop,"Cash, Card",No,Yes,Yes,Both,Yes,Yes,No
+La Plage,Fusion,4.7,11:00,22:00,1363,15.485818667129754,74.17219729791064,Yes,No,No,Lounge,UPI Only,No,No,No,Both,No,Yes,Yes
+Patio 23,Vegetarian,4.9,10:00,00:00,370,15.797417435325645,73.87293120683357,No,Yes,No,Fine Dining,UPI Only,Yes,Yes,No,Indoor,No,Yes,Yes
+Fusion,Fusion,4.0,07:00,23:00,252,15.480131200856182,73.90678770922999,Yes,Yes,Yes,Fine Dining,"Cash, Card",Yes,Yes,Yes,Both,No,No,No
+Baba Au Rhum,Portuguese,3.9,09:00,23:00,1164,15.314264146868307,73.70708825433329,Yes,Yes,Yes,Fine Dining,"Cash, Card, UPI",No,Yes,No,Both,No,Yes,No
+Kokni Kanteen,Goan,4.1,10:00,22:00,678,15.387685933973502,73.98743200467567,Yes,No,Yes,Garden,"Card, UPI",Yes,Yes,Yes,Both,No,No,Yes
+Tio Tilly's,Continental,4.3,09:00,01:00,213,15.215192624791944,74.17464385468,Yes,Yes,No,Rustic,Cash Only,No,No,No,Both,No,Yes,Yes
+Chulha,Indian,4.8,07:00,23:00,366,15.620965229425869,74.16501381263332,Yes,No,No,Rooftop,Cash Only,No,No,No,Both,Yes,No,Yes
+Bhatti Village,Seafood,4.1,11:00,22:00,1926,15.259797688523644,73.74478860588128,Yes,Yes,No,Lounge,"Card, UPI",No,Yes,No,Both,No,No,Yes
+Sakana,Continental,4.0,09:00,22:00,716,15.433388939273945,73.95878054043102,Yes,Yes,Yes,Beachfront,Cash Only,No,No,No,Both,No,Yes,Yes
+Foxes Fiesta,Mexican,4.3,09:00,23:00,1474,15.799066407407427,74.19475215663074,Yes,Yes,Yes,Rustic,UPI Only,No,No,No,Indoor,Yes,Yes,Yes
+Kismoor,Indian,4.8,08:00,23:00,479,15.2580221284315,73.93443612453642,Yes,Yes,No,Lounge,"Cash, Card, UPI",No,Yes,No,Outdoor,Yes,Yes,Yes
+Bodega,Indian,4.6,11:00,00:00,295,15.536714514032463,73.73083394429035,Yes,No,No,Rooftop,"Cash, Card",Yes,Yes,Yes,Outdoor,No,Yes,Yes
+The Red Ginger,Italian,4.7,11:00,23:00,386,15.313353195631102,74.00599586786203,Yes,No,No,Casual Dining,"Card, UPI",No,Yes,Yes,Indoor,No,Yes,Yes
+Edible Archives,Continental,4.1,09:00,00:00,1467,15.402591430336086,73.9855069479529,Yes,Yes,Yes,Garden,UPI Only,Yes,No,No,Indoor,No,Yes,Yes
+Yaki Zushi,Indian,5.0,10:00,01:00,851,15.508971547406087,73.73231218234424,No,No,No,Rustic,"Card, UPI",No,Yes,No,Outdoor,No,Yes,Yes
+Desbue,Portuguese,3.8,07:00,00:00,216,15.210460915107904,73.74802761994907,Yes,No,No,Cafe-style,Cash Only,Yes,No,No,Both,No,Yes,Yes
+Fisherman's Hut,Seafood,4.1,11:00,23:00,1509,15.731371644533922,74.0492287731154,Yes,Yes,No,Garden,UPI Only,No,Yes,No,Indoor,No,Yes,Yes
+The Village Bistro,Goan,4.2,11:00,00:00,1171,15.430916939833217,74.09552694651833,Yes,No,Yes,Beachfront,Cash Only,Yes,No,Yes,Outdoor,No,Yes,Yes
+Cantare,Asian,3.9,10:00,01:00,873,15.424307596727875,73.85190630308713,Yes,Yes,Yes,Cafe-style,"Card, UPI",Yes,Yes,No,Both,No,Yes,Yes
+Peep Kitchen,Seafood,4.8,07:00,00:00,1544,15.262354866026666,74.1631727366187,Yes,Yes,No,Fine Dining,"Card, UPI",Yes,No,No,Indoor,No,Yes,Yes
+Panjim Inn Restaurant,Portuguese,4.1,08:00,23:00,1212,15.400888885823669,73.84268339843808,No,Yes,Yes,Cafe-style,Cash Only,No,Yes,No,Outdoor,No,Yes,Yes
+Tato's Fine Dining,Seafood,5.0,10:00,01:00,1115,15.218170538247529,73.8502774982338,Yes,Yes,Yes,Rustic,"Cash, Card",Yes,No,No,Outdoor,No,Yes,Yes
+Shivers Garden Restaurant,Seafood,5.0,11:00,00:00,943,15.52317648499989,73.81420236047433,Yes,Yes,No,Beachfront,UPI Only,Yes,No,Yes,Indoor,Yes,No,Yes
+Chef Fernando's Nostalgia,Indian,4.9,08:00,23:00,1695,15.396243508219888,73.94417737016633,Yes,No,Yes,Beachfront,"Cash, Card, UPI",Yes,Yes,Yes,Both,No,Yes,Yes
+Rio Cafe Bar,Goan,4.6,07:00,00:00,796,15.603685848582762,73.86191304447979,No,Yes,No,Cafe-style,"Cash, Card",Yes,Yes,No,Indoor,No,Yes,Yes
+The River House,Fusion,4.9,10:00,22:00,1278,15.76716188422569,74.01295914936362,Yes,Yes,Yes,Rooftop,"Cash, Card, UPI",No,No,Yes,Both,No,No,No
+Copper Bistro,Indian,3.8,09:00,01:00,662,15.575611159482863,73.97353504672711,Yes,Yes,No,Beachfront,UPI Only,No,No,Yes,Outdoor,No,No,Yes
+Pisco by the Beach,Italian,4.5,10:00,00:00,1872,15.712049654841481,73.87217327255382,Yes,No,No,Rustic,Cash Only,No,Yes,No,Outdoor,No,Yes,Yes
+Koi Asian Dining,Asian,4.1,08:00,22:00,1528,15.287308342694821,74.06050113896961,Yes,No,Yes,Garden,"Cash, Card, UPI",No,Yes,No,Indoor,No,Yes,Yes
+Magic Italy,Italian,4.8,07:00,00:00,1990,15.306636685544555,73.87604566978835,Yes,No,No,Rustic,"Card, UPI",No,Yes,Yes,Both,No,Yes,Yes
+Sunset Ashram,Vegetarian,4.1,07:00,01:00,1119,15.6490871886315,73.70731560512276,No,Yes,Yes,Casual Dining,"Card, UPI",Yes,Yes,No,Indoor,No,Yes,Yes
+La Vie,Goan,3.6,08:00,23:00,1453,15.798509044356306,74.07855145054675,Yes,Yes,Yes,Beachfront,"Card, UPI",No,No,No,Indoor,No,Yes,Yes
+Route 66,Goan,3.8,10:00,23:00,1748,15.792965122306025,73.97089367899862,No,No,Yes,Beachfront,UPI Only,Yes,Yes,Yes,Indoor,Yes,Yes,Yes
+Bean Me Up,Vegetarian,4.7,11:00,23:00,666,15.526339126224347,73.87643398517527,Yes,Yes,No,Rustic,"Card, UPI",Yes,No,No,Indoor,Yes,Yes,Yes
+Nostalgia,Asian,4.4,11:00,22:00,1658,15.77227032903518,73.92041011681567,No,No,No,Fine Dining,"Cash, Card, UPI",Yes,No,Yes,Indoor,No,Yes,Yes
+The Bohemian,Goan,4.5,07:00,00:00,1570,15.793413164907495,73.77578499672633,Yes,Yes,No,Rooftop,"Cash, Card",No,Yes,No,Both,No,Yes,Yes
+Big Pecker,Asian,4.8,10:00,22:00,1123,15.245809714870678,73.89680841239849,Yes,Yes,No,Cafe-style,Cash Only,Yes,No,Yes,Indoor,Yes,Yes,Yes
+Basilico,Asian,4.3,07:00,22:00,1102,15.70731698854559,74.15401053216463,Yes,Yes,No,Fine Dining,UPI Only,No,No,No,Outdoor,No,Yes,Yes
+Hideaway,Vegetarian,4.1,07:00,22:00,1153,15.75647756916516,73.77496475375405,No,No,No,Rustic,Cash Only,Yes,Yes,No,Outdoor,No,Yes,Yes
+Salt Bar & Restaurant,Italian,4.0,07:00,00:00,1111,15.565677670593827,73.73280797483682,No,Yes,Yes,Casual Dining,"Cash, Card",Yes,No,No,Outdoor,No,Yes,Yes
+Mango Grove,Fusion,4.4,09:00,01:00,393,15.41793135323628,74.06253345885115,No,No,Yes,Casual Dining,"Cash, Card",No,No,No,Outdoor,No,No,Yes
+Tangerine,Asian,4.4,07:00,23:00,1079,15.432353266530479,73.90862078748967,Yes,No,Yes,Rooftop,Cash Only,Yes,No,Yes,Outdoor,No,Yes,Yes
+Rajbhog,Seafood,4.4,10:00,23:00,1351,15.216045211790409,73.95864766720723,Yes,No,No,Lounge,"Card, UPI",Yes,Yes,No,Indoor,No,Yes,Yes
+Latitude,Goan,4.5,07:00,22:00,1528,15.67344838945351,74.16314338906892,Yes,No,Yes,Rustic,"Card, UPI",Yes,Yes,No,Indoor,Yes,No,Yes
+Mirelle's,Goan,4.4,07:00,23:00,1698,15.224014557703667,74.15680899557803,No,No,Yes,Rooftop,"Card, UPI",Yes,No,No,Both,No,Yes,Yes
+Zanzibar,Indian,4.1,10:00,22:00,925,15.470007204515461,74.16599825411039,Yes,No,Yes,Beachfront,"Cash, Card, UPI",Yes,No,No,Both,Yes,Yes,Yes
+Anand Seafood,Fusion,3.7,08:00,23:00,303,15.50082393817055,73.82666374386812,Yes,Yes,Yes,Rustic,"Cash, Card",Yes,No,Yes,Outdoor,Yes,Yes,Yes
+Brittos Shack,Seafood,4.7,08:00,00:00,1486,15.440454576360445,73.88427036099273,Yes,Yes,Yes,Garden,Cash Only,Yes,Yes,Yes,Indoor,Yes,Yes,Yes
+Toritos,Vegetarian,4.3,08:00,00:00,669,15.533764414072982,74.12672847224856,No,No,Yes,Cafe-style,"Cash, Card, UPI",No,No,Yes,Outdoor,No,Yes,Yes
+Earl’s Secret,Indian,4.3,09:00,23:00,883,15.756773946076004,74.06364587545927,Yes,No,Yes,Rooftop,"Cash, Card",No,Yes,Yes,Indoor,No,Yes,Yes
+Saz on the Beach,Vegetarian,3.6,08:00,00:00,1003,15.36858437756941,74.01046673648727,Yes,No,No,Fine Dining,"Cash, Card, UPI",Yes,No,Yes,Outdoor,No,Yes,Yes
+Petisco,Seafood,3.6,07:00,01:00,1694,15.720395340263577,73.90372404371686,Yes,Yes,No,Beachfront,Cash Only,Yes,No,No,Outdoor,No,Yes,Yes
+Copper Kitchen,Fusion,3.8,07:00,01:00,795,15.598823294668698,73.91772994771435,No,No,Yes,Rooftop,UPI Only,No,Yes,No,Both,No,No,No
+The Palm Grove,Continental,3.5,10:00,00:00,498,15.653433537009747,74.0229582293699,Yes,Yes,Yes,Garden,UPI Only,Yes,No,No,Indoor,No,Yes,Yes
+Upper Deck,Italian,3.5,08:00,00:00,328,15.700592491461103,73.80326213637395,Yes,No,No,Fine Dining,Cash Only,Yes,Yes,No,Both,Yes,Yes,Yes
+Texas,Italian,4.6,10:00,00:00,1884,15.664507847635901,73.801196843646,Yes,Yes,No,Cafe-style,"Card, UPI",Yes,No,Yes,Both,No,Yes,Yes
+Las Olas,Asian,3.9,07:00,01:00,1276,15.613171808226257,73.86094538991816,Yes,No,No,Casual Dining,"Cash, Card",No,No,No,Both,No,Yes,Yes
+Ruchi,Italian,3.6,08:00,22:00,988,15.65359967523607,73.71078664800775,Yes,Yes,Yes,Beachfront,Cash Only,No,No,Yes,Both,No,No,Yes
+Casa Portuguesa,Mexican,3.8,07:00,01:00,361,15.498841339489083,74.00825379784442,No,Yes,Yes,Garden,"Cash, Card, UPI",Yes,Yes,Yes,Outdoor,No,Yes,Yes
+Destino,Fusion,3.5,11:00,00:00,1015,15.398536051575872,74.10571600965046,Yes,Yes,No,Cafe-style,Cash Only,Yes,Yes,No,Indoor,No,No,Yes

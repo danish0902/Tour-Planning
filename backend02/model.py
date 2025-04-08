@@ -14,8 +14,8 @@ from datetime import datetime, timedelta
 import random
 
 # Load datasets
-restaurants = pd.read_csv("D:/data/Desktop/Goa Datasets/goa_restaurants.csv")
-tourist_places = pd.read_csv("D:/data/Desktop/Goa Datasets/goa_tourist_places.csv")
+restaurants = pd.read_csv("goa_restaurants.csv")
+tourist_places = pd.read_csv("goa_tourist_places.csv")
 
 # Clean data
 tourist_places = tourist_places[~tourist_places['Name'].str.contains('- Alt')]
@@ -576,24 +576,36 @@ def generate_daily_itinerary(must_visit_locations, other_locations, bf_model, bf
     distances = []
     nearby_options = []
     visited = set()
-    
+
     # Select must-visit locations for this day (minimum 1, maximum 2)
     day_must_visit = must_visit_locations[:min(2, len(must_visit_locations))]
-    remaining_must_visit = must_visit_locations[min(2, len(must_visit_locations)):]
-    
+    remaining_must_visit = must_visit_locations[min(2, len(must_visit_locations)):] 
+
+    def get_place_by_name(name):
+        match = tourist_places[tourist_places['Name'] == name]
+        if not match.empty:
+            return match.iloc[0], name
+        close = find_closest_match(name, tourist_places['Name'].tolist())
+        if close:
+            print(f"Fuzzy match used: {name} → {close}")
+            return tourist_places[tourist_places['Name'] == close].iloc[0], close
+        fallback = tourist_places.sort_values('Star Rating', ascending=False).iloc[0]
+        print(f"No match found for {name}, using fallback {fallback['Name']}")
+        return fallback, fallback['Name']
+
     # Get location data for first must-visit location (or fallback if none)
     if len(day_must_visit) > 0:
-        loc1_data = tourist_places[tourist_places['Name'] == day_must_visit[0]].iloc[0]
+        loc1_data, corrected_name = get_place_by_name(day_must_visit[0])
+        day_must_visit[0] = corrected_name
     else:
-        # If no must-visit locations left, pick a high-rated location
         loc1_data = tourist_places.sort_values('Star Rating', ascending=False).iloc[0]
         day_must_visit.append(loc1_data['Name'])
-    
+
     # Get location data for second must-visit location (or find a nearby one)
     if len(day_must_visit) > 1:
-        loc2_data = tourist_places[tourist_places['Name'] == day_must_visit[1]].iloc[0]
+        loc2_data, corrected_name = get_place_by_name(day_must_visit[1])
+        day_must_visit[1] = corrected_name
     else:
-        # Find a nearby high-rated location
         nearby = get_nearest_location(
             (loc1_data['Latitude'], loc1_data['Longitude']),
             tourist_places[~tourist_places['Name'].isin(must_visit_locations + day_must_visit)],
@@ -603,10 +615,8 @@ def generate_daily_itinerary(must_visit_locations, other_locations, bf_model, bf
             loc2_data = nearby[1]
             day_must_visit.append(nearby[0])
         else:
-            # Fallback if no nearby locations found
             loc2_data = tourist_places.sort_values('Star Rating', ascending=False).iloc[1]
             day_must_visit.append(loc2_data['Name'])
-    
     # 1. Find breakfast restaurant using ML prediction
     breakfast_name, breakfast_data, breakfast_dist = predict_breakfast_location(
         bf_model, bf_scaler_X, bf_scaler_y, loc1_data)
