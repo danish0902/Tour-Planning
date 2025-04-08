@@ -1,0 +1,237 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.section-content {
+    padding: 2rem;
+    background-color: #f9faff;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+  }
+  
+  .section-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #1f265c;
+  }
+  
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f0f4ff, #dce1f7);
+  overflow-x: hidden;
+}
+
+.profile-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  transition: all 0.3s ease;
+}
+
+.hamburger-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 1.8rem;
+    height: 1.8rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;  /* smaller icon size */
+    z-index: 3000;       /* higher than sidebar */
+    cursor: pointer;
+    color: #b2bbee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+
+/* Sidebar */
+.profile-sidebar {
+  width: 250px;
+  background: linear-gradient(180deg, #1f265c, #2a3173);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 2rem 1.5rem;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  transition: transform 0.1s ease-in-out;
+  transform: translateX(0); /* default visible */
+ 
+}
+
+.profile-sidebar.closed {
+  transform: translateX(-100%);
+}
+
+.profile-sidebar .logo {
+    padding:0px;
+    position:fixed;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-top:2rem;
+  margin-left:82rem;
+  color: #a5b4fc;
+  letter-spacing: 0.5px;
+}
+
+.profile-sidebar nav {
+    margin-top:5rem;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.8rem;
+}
+
+.profile-sidebar nav button {
+  width: 100%;
+  background: none;
+  border: none;
+  color: #e2e8ff;
+  font-size: 1rem;
+  padding: 0.9rem 1rem;
+  text-align: left;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.profile-field {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+  }
+  
+  .profile-field label {
+    width: 100px;
+    font-weight: 600;
+    color: #3b3f58;
+  }
+
+  .profile-field input {
+    flex: 1;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #d0d4f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #ffffff;
+    transition: box-shadow 0.3s ease;
+  }
+  
+.profile-sidebar nav button:hover,
+.profile-sidebar nav button:focus {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(5px);
+}
+
+.profile-sidebar nav button.active {
+  background-color: rgba(165, 180, 252, 0.2);
+  font-weight: 600;
+}
+
+/* Main content */
+.profile-main {
+  flex: 1;
+  margin-left: 250px;
+  padding: 3rem 4rem;
+  background: white;
+  height: 100vh;
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  box-shadow: -8px 0 20px rgba(0, 0, 0, 0.08);
+}
+
+.profile-main.full {
+  margin-left: 0;
+}
+
+/* Profile fields and forms */
+.section-content {
+  max-width: 600px;
+}
+
+.profile-field {
+  margin-bottom: 1rem;
+}
+
+.profile-field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.profile-field input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.profile-field input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(165, 180, 252, 0.4);
+  }
+  
+
+.input-field {
+  display: block;
+  margin-bottom: 1rem;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.action-button {
+  margin-top: 1rem;
+  padding: 0.7rem 1.4rem;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+  background-color: #4338ca;
+}
+
+.action-button.logout {
+  background-color: #dc2626;
+}
+
+.action-button.logout:hover {
+  background-color: #b91c1c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-sidebar {
+    position: fixed;
+    height: 100%;
+    transform: translateX(-100%);
+  }
+
+  .profile-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .profile-main {
+    margin-left: 0;
+    padding: 2rem;
+  }
+}
