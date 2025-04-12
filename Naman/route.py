@@ -14,8 +14,8 @@ from datetime import datetime, timedelta
 import random
 
 # Load datasets
-restaurants = pd.read_csv("goa_restaurants.csv")
-tourist_places = pd.read_csv("goa_tourist_places.csv")
+restaurants = pd.read_csv("D:/data/Desktop/Goa Datasets/goa_restaurants.csv")
+tourist_places = pd.read_csv("D:/data/Desktop/Goa Datasets/goa_tourist_places.csv")
 
 # Clean data
 tourist_places = tourist_places[~tourist_places['Name'].str.contains('- Alt')]
@@ -74,12 +74,18 @@ def find_closest_match(user_input, options):
     matches = get_close_matches(user_input, options, n=1, cutoff=0.6)
     return matches[0] if matches else None
 
-def get_nearby_restaurants(coords, rest_df, visited, max_distance=2.5, time_slot=None, time_filter=None, max_results=3):
-    """Find nearby restaurants within specified distance"""
+def get_nearby_restaurants(coords, rest_df, visited, max_distance=2.5, time_slot=None, 
+                          time_filter=None, max_results=3, vegetarian_only=False, 
+                          exclude_name=None):
+    """Find nearby restaurants within specified distance with vegetarian filter"""
     nearby = []
     
     for _, row in rest_df.iterrows():
-        if row['Name'] not in visited:
+        if row['Name'] not in visited and row['Name'] != exclude_name:
+            # Check vegetarian filter if enabled
+            if vegetarian_only and row['Vegetarian/Vegan Options'] != 'Yes':
+                continue
+                
             # Check time filter (breakfast, lunch, dinner)
             time_filter_ok = True
             if time_filter is not None:
@@ -96,7 +102,7 @@ def get_nearby_restaurants(coords, rest_df, visited, max_distance=2.5, time_slot
                 distance = geodesic(coords, rest_coords).km
                 
                 if distance <= max_distance:
-                    nearby.append((row['Name'], row['Cuisine Type'], distance))
+                    nearby.append((row['Name'], row['Cuisine Type'], distance, row['Vegetarian/Vegan Options']))
     
     # Sort by distance and return at most max_results
     nearby.sort(key=lambda x: x[2])
@@ -410,10 +416,15 @@ def train_location_ordering_model(tourist_places):
     
     return model, scaler_X
 
-def predict_breakfast_location(model, scaler_X, scaler_y, tourist_place):
-    """Use trained model to predict optimal breakfast location"""
+def predict_breakfast_location(model, scaler_X, scaler_y, tourist_place, vegetarian_only=False):
+    """Use trained model to predict optimal breakfast location with vegetarian option"""
     # Find highest rated breakfast places first
-    breakfast_options = restaurants[restaurants['Breakfast'] == 'Yes'].sort_values('Rating', ascending=False)
+    breakfast_options = restaurants[(restaurants['Breakfast'] == 'Yes')]
+    
+    if vegetarian_only:
+        breakfast_options = breakfast_options[breakfast_options['Vegetarian/Vegan Options'] == 'Yes']
+    
+    breakfast_options = breakfast_options.sort_values('Rating', ascending=False)
     
     # Filter to only keep places open during breakfast time
     open_breakfast = []
@@ -454,6 +465,9 @@ def predict_breakfast_location(model, scaler_X, scaler_y, tourist_place):
     best_rest = None
     
     for _, rest in breakfast_options.iterrows():
+        if vegetarian_only and rest['Vegetarian/Vegan Options'] != 'Yes':
+            continue
+            
         dist = geodesic((y_pred[0][0], y_pred[0][1]), (rest['Latitude'], rest['Longitude'])).km
         if dist < min_dist:
             min_dist = dist
@@ -461,10 +475,15 @@ def predict_breakfast_location(model, scaler_X, scaler_y, tourist_place):
     
     if best_rest is None:
         # Absolute fallback - just pick the highest rated breakfast place
-        best_rest = breakfast_options.iloc[0]
-        dist = geodesic((tourist_place['Latitude'], tourist_place['Longitude']), 
-                      (best_rest['Latitude'], best_rest['Longitude'])).km
-        return best_rest['Name'], best_rest, dist
+        fallback_options = restaurants[(restaurants['Breakfast'] == 'Yes')]
+        if vegetarian_only:
+            fallback_options = fallback_options[fallback_options['Vegetarian/Vegan Options'] == 'Yes']
+        
+        if not fallback_options.empty:
+            best_rest = fallback_options.iloc[0]
+            dist = geodesic((tourist_place['Latitude'], tourist_place['Longitude']), 
+                          (best_rest['Latitude'], best_rest['Longitude'])).km
+            return best_rest['Name'], best_rest, dist
     
     return best_rest['Name'], best_rest, min_dist
 
@@ -480,9 +499,9 @@ def optimize_three_locations_order(loc_model, loc_scaler, loc1_data, loc2_data, 
     # Calculate pairwise distances
     dist_12 = geodesic((loc1_data['Latitude'], loc1_data['Longitude']), 
                      (loc2_data['Latitude'], loc2_data['Longitude'])).km
-    dist_23 = geodesic((loc2_data['Latitude'], loc2_data['Longitude']), 
+    dist_bc = geodesic((loc2_data['Latitude'], loc2_data['Longitude']), 
                      (loc3_data['Latitude'], loc3_data['Longitude'])).km
-    dist_13 = geodesic((loc1_data['Latitude'], loc1_data['Longitude']), 
+    dist_ac = geodesic((loc1_data['Latitude'], loc1_data['Longitude']), 
                      (loc3_data['Latitude'], loc3_data['Longitude'])).km
     
     # Enhanced features for prediction
@@ -490,7 +509,7 @@ def optimize_three_locations_order(loc_model, loc_scaler, loc1_data, loc2_data, 
         loc1_data['Latitude'], loc1_data['Longitude'], loc1_data['Star Rating'],
         loc2_data['Latitude'], loc2_data['Longitude'], loc2_data['Star Rating'],
         loc3_data['Latitude'], loc3_data['Longitude'], loc3_data['Star Rating'],
-        dist_12, dist_23, dist_13,  # Add pairwise distances
+        dist_12, dist_bc, dist_ac,  # Add pairwise distances
         direct_distances['loc1'], direct_distances['loc2'], direct_distances['loc3'],  # Add starting distances
         # Include opening time info
         time_to_minutes(loc1_data.get('Opening Time', '09:00')),
@@ -570,46 +589,72 @@ def optimize_three_locations_order(loc_model, loc_scaler, loc1_data, loc2_data, 
     return greedy_route_optimizer([loc1_data, loc2_data, loc3_data], starting_coords)
 
 def generate_daily_itinerary(must_visit_locations, other_locations, bf_model, bf_scaler_X, bf_scaler_y, 
-                           route_model, route_scaler, loc_order_model, loc_order_scaler):
-    """Generate optimized daily itinerary using ML for route optimization"""
+                           route_model, route_scaler, loc_order_model, loc_order_scaler, 
+                           vegetarian_only=False, all_visited_locations=None):
+    """Generate optimized daily itinerary using ML for route optimization with vegetarian option"""
     itinerary = []
     distances = []
     nearby_options = []
-    visited = set()
+    daily_visited = set()
+    
+    if all_visited_locations is None:
+        all_visited_locations = set()
     
     # Select must-visit locations for this day (minimum 1, maximum 2)
-    day_must_visit = must_visit_locations[:min(2, len(must_visit_locations))]
-    remaining_must_visit = must_visit_locations[min(2, len(must_visit_locations)):]
+    day_must_visit = []
+    for loc in must_visit_locations:
+        if loc not in all_visited_locations:
+            day_must_visit.append(loc)
+            if len(day_must_visit) >= 2:
+                break
+    
+    remaining_must_visit = [loc for loc in must_visit_locations if loc not in day_must_visit]
     
     # Get location data for first must-visit location (or fallback if none)
     if len(day_must_visit) > 0:
         loc1_data = tourist_places[tourist_places['Name'] == day_must_visit[0]].iloc[0]
     else:
-        # If no must-visit locations left, pick a high-rated location
-        loc1_data = tourist_places.sort_values('Star Rating', ascending=False).iloc[0]
-        day_must_visit.append(loc1_data['Name'])
+        # If no must-visit locations left, pick a high-rated location not yet visited
+        available_locations = tourist_places[~tourist_places['Name'].isin(all_visited_locations)]
+        if len(available_locations) > 0:
+            loc1_data = available_locations.sort_values('Star Rating', ascending=False).iloc[0]
+            day_must_visit.append(loc1_data['Name'])
+        else:
+            # If all locations have been visited, just pick the highest rated one
+            loc1_data = tourist_places.sort_values('Star Rating', ascending=False).iloc[0]
+            day_must_visit.append(loc1_data['Name'])
     
     # Get location data for second must-visit location (or find a nearby one)
     if len(day_must_visit) > 1:
         loc2_data = tourist_places[tourist_places['Name'] == day_must_visit[1]].iloc[0]
     else:
-        # Find a nearby high-rated location
+        # Find a nearby high-rated location not yet visited
+        available_locations = tourist_places[
+            ~tourist_places['Name'].isin(all_visited_locations) & 
+            ~tourist_places['Name'].isin(must_visit_locations + day_must_visit)
+        ]
         nearby = get_nearest_location(
             (loc1_data['Latitude'], loc1_data['Longitude']),
-            tourist_places[~tourist_places['Name'].isin(must_visit_locations + day_must_visit)],
-            visited
+            available_locations,
+            all_visited_locations
         )
         if nearby[0]:
             loc2_data = nearby[1]
             day_must_visit.append(nearby[0])
         else:
-            # Fallback if no nearby locations found
-            loc2_data = tourist_places.sort_values('Star Rating', ascending=False).iloc[1]
-            day_must_visit.append(loc2_data['Name'])
+            # Fallback if no nearby locations found - pick highest rated not visited
+            available_locations = tourist_places[~tourist_places['Name'].isin(all_visited_locations)]
+            if len(available_locations) > 0:
+                loc2_data = available_locations.sort_values('Star Rating', ascending=False).iloc[0]
+                day_must_visit.append(loc2_data['Name'])
+            else:
+                # If all locations have been visited, just pick the second highest rated one
+                loc2_data = tourist_places.sort_values('Star Rating', ascending=False).iloc[1]
+                day_must_visit.append(loc2_data['Name'])
     
-    # 1. Find breakfast restaurant using ML prediction
+    # 1. Find breakfast restaurant using ML prediction with vegetarian filter
     breakfast_name, breakfast_data, breakfast_dist = predict_breakfast_location(
-        bf_model, bf_scaler_X, bf_scaler_y, loc1_data)
+        bf_model, bf_scaler_X, bf_scaler_y, loc1_data, vegetarian_only)
     
     itinerary.append({
         'Type': 'Breakfast Restaurant',
@@ -618,39 +663,47 @@ def generate_daily_itinerary(must_visit_locations, other_locations, bf_model, bf
         'Rating': breakfast_data['Rating'],
         'Latitude': breakfast_data['Latitude'],
         'Longitude': breakfast_data['Longitude'],
+        'Vegetarian': breakfast_data['Vegetarian/Vegan Options'] == 'Yes',
         'Time': time_slots['breakfast']
     })
     distances.append(None)  # No distance for starting location
-    visited.add(breakfast_name)
+    daily_visited.add(breakfast_name)
+    all_visited_locations.add(breakfast_name)
     current_coords = (breakfast_data['Latitude'], breakfast_data['Longitude'])
     
-    # Find nearby breakfast options
+    # Find nearby breakfast options with vegetarian filter (excluding current breakfast)
     breakfast_coords = (breakfast_data['Latitude'], breakfast_data['Longitude'])
     nearby_breakfast = get_nearby_restaurants(
         breakfast_coords, 
         restaurants[restaurants['Breakfast'] == 'Yes'], 
-        visited,
-        time_slot='breakfast'
+        all_visited_locations,
+        time_slot='breakfast',
+        vegetarian_only=vegetarian_only,
+        exclude_name=breakfast_name
     )
     nearby_options.append(nearby_breakfast)
     
     # 2. Find an additional tourist place (either from remaining must-visit or other locations)
+    available_locations = tourist_places[
+        ~tourist_places['Name'].isin(all_visited_locations) &
+        ~tourist_places['Name'].isin(day_must_visit)
+    ]
+    
     if remaining_must_visit:
         candidate_places = tourist_places[
             ~tourist_places['Name'].isin(day_must_visit) & 
-            tourist_places['Name'].isin(remaining_must_visit)
+            tourist_places['Name'].isin(remaining_must_visit) &
+            ~tourist_places['Name'].isin(all_visited_locations)
         ]
     else:
-        candidate_places = tourist_places[
-            ~tourist_places['Name'].isin(day_must_visit)
-        ]
+        candidate_places = available_locations
     
     best_additional = None
     best_additional_data = None
     min_total_distance = float('inf')
     
     for _, candidate in candidate_places.iterrows():
-        if candidate['Name'] not in visited and is_open_during_slot(candidate, 
+        if candidate['Name'] not in all_visited_locations and is_open_during_slot(candidate, 
                                                                    time_slots['location3'][0], 
                                                                    time_slots['location3'][1]):
             # Try this candidate and measure the total route distance
@@ -682,12 +735,20 @@ def generate_daily_itinerary(must_visit_locations, other_locations, bf_model, bf
         print("No suitable additional tourist place found!")
         additional_name, additional_data, additional_dist = get_nearest_location(
             current_coords,
-            tourist_places[~tourist_places['Name'].isin(day_must_visit)],
-            visited,
+            available_locations,
+            all_visited_locations,
             time_slot='location3'
         )
         if not additional_name:
-            return None, None, None, remaining_must_visit
+            # If no new locations found, just pick one that's already been visited
+            additional_name, additional_data, additional_dist = get_nearest_location(
+                current_coords,
+                tourist_places,
+                set(),
+                time_slot='location3'
+            )
+            if not additional_name:
+                return None, None, None, remaining_must_visit, all_visited_locations
     else:
         additional_name = best_additional
         additional_data = best_additional_data
@@ -715,20 +776,23 @@ def generate_daily_itinerary(must_visit_locations, other_locations, bf_model, bf
         'Time': time_slots['location1']
     })
     distances.append(dist_to_first)
-    visited.add(first_location['Name'])
+    daily_visited.add(first_location['Name'])
+    all_visited_locations.add(first_location['Name'])
     current_coords = first_location_coords
     nearby_options.append([])
     
-    # 5. Find lunch restaurant
+    # 5. Find lunch restaurant with vegetarian filter
     lunch_candidates = restaurants[restaurants['Lunch'] == 'Yes']
     
-    # Find nearby lunch options that are open during lunch time
+    # Find nearby lunch options that are open during lunch time (excluding current lunch)
     nearby_lunch = get_nearby_restaurants(
         current_coords,
         lunch_candidates,
-        visited,
+        all_visited_locations,
         time_slot='lunch',
-        max_distance=3.0
+        max_distance=3.0,
+        vegetarian_only=vegetarian_only,
+        exclude_name=best_lunch_name if 'best_lunch_name' in locals() else None
     )
     
     if not nearby_lunch:
@@ -736,15 +800,16 @@ def generate_daily_itinerary(must_visit_locations, other_locations, bf_model, bf
         nearby_lunch = get_nearby_restaurants(
             current_coords,
             lunch_candidates,
-            visited,
+            all_visited_locations,
             time_slot='lunch',
-            max_distance=5.0
+            max_distance=5.0,
+            vegetarian_only=vegetarian_only
         )
     
     if nearby_lunch:
         # Select the best lunch option based on rating and distance
         scored_lunch = []
-        for name, cuisine, dist in nearby_lunch:
+        for name, cuisine, dist, veg in nearby_lunch:
             rest_data = restaurants[restaurants['Name'] == name].iloc[0]
             score = rest_data['Rating'] - 0.1 * dist
             scored_lunch.append((name, cuisine, dist, score))
@@ -762,10 +827,12 @@ def generate_daily_itinerary(must_visit_locations, other_locations, bf_model, bf
             'Rating': lunch_data['Rating'],
             'Latitude': lunch_data['Latitude'],
             'Longitude': lunch_data['Longitude'],
+            'Vegetarian': lunch_data['Vegetarian/Vegan Options'] == 'Yes',
             'Time': time_slots['lunch']
         })
         distances.append(lunch_dist)
-        visited.add(best_lunch_name)
+        daily_visited.add(best_lunch_name)
+        all_visited_locations.add(best_lunch_name)
         current_coords = (lunch_data['Latitude'], lunch_data['Longitude'])
         nearby_options.append(nearby_lunch)
     else:
@@ -791,7 +858,8 @@ def generate_daily_itinerary(must_visit_locations, other_locations, bf_model, bf
         'Time': time_slots['location2']
     })
     distances.append(dist_to_second)
-    visited.add(second_location['Name'])
+    daily_visited.add(second_location['Name'])
+    all_visited_locations.add(second_location['Name'])
     current_coords = (second_location['Latitude'], second_location['Longitude'])
     nearby_options.append([])
     
@@ -809,36 +877,51 @@ def generate_daily_itinerary(must_visit_locations, other_locations, bf_model, bf
         'Time': time_slots['location3']
     })
     distances.append(dist_to_third)
-    visited.add(third_location['Name'])
+    daily_visited.add(third_location['Name'])
+    all_visited_locations.add(third_location['Name'])
     current_coords = (third_location['Latitude'], third_location['Longitude'])
     nearby_options.append([])
     
-    # 8. Find dinner restaurant
+    # 8. Find dinner restaurant with vegetarian filter (with robust fallback)
     dinner_candidates = restaurants[restaurants['Dinner'] == 'Yes']
     
-    # Find nearby dinner options that are open during dinner time
+    # First try nearby restaurants within 3km (excluding current dinner)
     nearby_dinner = get_nearby_restaurants(
         current_coords,
         dinner_candidates,
-        visited,
+        all_visited_locations,
         time_slot='dinner',
-        max_distance=3.0
+        max_distance=3.0,
+        vegetarian_only=vegetarian_only,
+        exclude_name=best_dinner_name if 'best_dinner_name' in locals() else None
     )
     
+    # If none found, expand search radius to 5km
     if not nearby_dinner:
-        # Fallback - find any dinner place within larger radius
         nearby_dinner = get_nearby_restaurants(
             current_coords,
             dinner_candidates,
-            visited,
+            all_visited_locations,
             time_slot='dinner',
-            max_distance=5.0
+            max_distance=5.0,
+            vegetarian_only=vegetarian_only
         )
     
+    # If still none found, consider any dinner place (ignore distance)
+    if not nearby_dinner:
+        nearby_dinner = get_nearby_restaurants(
+            current_coords,
+            dinner_candidates,
+            all_visited_locations,
+            time_slot='dinner',
+            max_distance=999,  # Very large distance
+            vegetarian_only=vegetarian_only
+        )
+    
+    # Select the best dinner option
     if nearby_dinner:
-        # Select the best dinner option based on rating and distance
         scored_dinner = []
-        for name, cuisine, dist in nearby_dinner:
+        for name, cuisine, dist, veg in nearby_dinner:
             rest_data = restaurants[restaurants['Name'] == name].iloc[0]
             score = rest_data['Rating'] - 0.1 * dist
             scored_dinner.append((name, cuisine, dist, score))
@@ -846,7 +929,6 @@ def generate_daily_itinerary(must_visit_locations, other_locations, bf_model, bf
         scored_dinner.sort(key=lambda x: x[3], reverse=True)
         best_dinner_name, best_dinner_cuisine, dinner_dist, _ = scored_dinner[0]
         
-        # Get full dinner data
         dinner_data = restaurants[restaurants['Name'] == best_dinner_name].iloc[0]
         
         itinerary.append({
@@ -856,47 +938,78 @@ def generate_daily_itinerary(must_visit_locations, other_locations, bf_model, bf
             'Rating': dinner_data['Rating'],
             'Latitude': dinner_data['Latitude'],
             'Longitude': dinner_data['Longitude'],
+            'Vegetarian': dinner_data['Vegetarian/Vegan Options'] == 'Yes',
             'Time': time_slots['dinner']
         })
         distances.append(dinner_dist)
-        visited.add(best_dinner_name)
+        daily_visited.add(best_dinner_name)
+        all_visited_locations.add(best_dinner_name)
         nearby_options.append(nearby_dinner)
     else:
-        itinerary.append({
-            'Type': 'Note',
-            'Note': 'No suitable dinner location found nearby',
-            'Time': time_slots['dinner']
-        })
-        distances.append(None)
-        nearby_options.append([])
+        # Absolute fallback - pick any dinner place that matches vegetarian filter
+        fallback_options = dinner_candidates
+        if vegetarian_only:
+            fallback_options = fallback_options[fallback_options['Vegetarian/Vegan Options'] == 'Yes']
+        
+        if not fallback_options.empty:
+            dinner_fallback = fallback_options.iloc[0]
+            itinerary.append({
+                'Type': 'Dinner Restaurant',
+                'Name': dinner_fallback['Name'],
+                'Cuisine': dinner_fallback['Cuisine Type'],
+                'Rating': dinner_fallback['Rating'],
+                'Latitude': dinner_fallback['Latitude'],
+                'Longitude': dinner_fallback['Longitude'],
+                'Vegetarian': dinner_fallback['Vegetarian/Vegan Options'] == 'Yes',
+                'Time': time_slots['dinner']
+            })
+            distances.append(None)
+            daily_visited.add(dinner_fallback['Name'])
+            all_visited_locations.add(dinner_fallback['Name'])
+            nearby_options.append([])
+        else:
+            itinerary.append({
+                'Type': 'Note',
+                'Note': 'No suitable dinner location found',
+                'Time': time_slots['dinner']
+            })
+            distances.append(None)
+            nearby_options.append([])
     
     # Update remaining must-visit locations
+    if len(day_must_visit) > 0 and day_must_visit[0] in remaining_must_visit:
+        remaining_must_visit.remove(day_must_visit[0])
+    if len(day_must_visit) > 1 and day_must_visit[1] in remaining_must_visit:
+        remaining_must_visit.remove(day_must_visit[1])
     if additional_name in remaining_must_visit:
         remaining_must_visit.remove(additional_name)
-    if day_must_visit[0] in remaining_must_visit:
-        remaining_must_visit.remove(day_must_visit[0])
-    if day_must_visit[1] in remaining_must_visit:
-        remaining_must_visit.remove(day_must_visit[1])
     
-    return itinerary, distances, nearby_options, remaining_must_visit
+    return itinerary, distances, nearby_options, remaining_must_visit, all_visited_locations
+
 
 def generate_multi_day_itinerary(num_days, must_visit_locations, bf_model, bf_scaler_X, bf_scaler_y,
-                               route_model, route_scaler, loc_order_model, loc_order_scaler):
-    """Generate multi-day itinerary with optimized daily plans"""
+                               route_model, route_scaler, loc_order_model, loc_order_scaler, vegetarian_only=False):
+    """Generate multi-day itinerary with optimized daily plans and vegetarian option"""
     all_itineraries = []
     remaining_must_visit = must_visit_locations.copy()
     other_locations = tourist_places[~tourist_places['Name'].isin(must_visit_locations)]
+    all_visited_locations = set()
+    
+    # Limit the number of days to 2-5
+    num_days = max(2, min(num_days, 5))
     
     for day in range(1, num_days + 1):
         print(f"\nGenerating itinerary for Day {day}...")
         
-        # Generate daily itinerary
-        itinerary, distances, nearby_options, remaining_must_visit = generate_daily_itinerary(
+        # Generate daily itinerary with vegetarian filter
+        itinerary, distances, nearby_options, remaining_must_visit, all_visited_locations = generate_daily_itinerary(
             remaining_must_visit if remaining_must_visit else must_visit_locations,
             other_locations,
             bf_model, bf_scaler_X, bf_scaler_y,
             route_model, route_scaler,
-            loc_order_model, loc_order_scaler
+            loc_order_model, loc_order_scaler,
+            vegetarian_only,
+            all_visited_locations
         )
         
         if not itinerary:
@@ -954,7 +1067,9 @@ def print_multi_day_itinerary(all_itineraries):
                 print(f"   Rating: {item['Rating']:.1f}/5")
             if 'Latitude' in item and 'Longitude' in item:
                 print(f"   Coordinates: ({item['Latitude']:.6f}, {item['Longitude']:.6f})")
-            if 'Note' in item:  # Add this condition to print the note content
+            if 'Vegetarian' in item:
+                print(f"   Vegetarian: {'Yes' if item['Vegetarian'] else 'No'}")
+            if 'Note' in item:
                 print(f"   Note: {item['Note']}")
             if distances[i] is not None:
                 print(f"   Distance from previous: {distances[i]:.2f} km")
@@ -963,7 +1078,8 @@ def print_multi_day_itinerary(all_itineraries):
             if nearby_options[i] and ('Restaurant' in item['Type'] or 'Breakfast' in item['Type']):
                 print("\n   Nearby alternatives:")
                 for alt in nearby_options[i]:
-                    print(f"   - {alt[0]} ({alt[1]}, {alt[2]:.1f} km away)")
+                    veg_status = " (Vegetarian)" if alt[3] == 'Yes' else ""
+                    print(f"   - {alt[0]} ({alt[1]}{veg_status}, {alt[2]:.1f} km away)")
             
             print()  # Add empty line between items
         
@@ -989,24 +1105,24 @@ if __name__ == "__main__":
     # Get user input for trip duration
     while True:
         try:
-            num_days = int(input("Enter number of days for your Goa trip (3-7 days): "))
-            if 3 <= num_days <= 7:
+            num_days = int(input("Enter number of days for your Goa trip (2-5 days): "))
+            if 2 <= num_days <= 5:
                 break
             else:
-                print("Please enter a number between 3 and 7.")
+                print("Please enter a number between 2 and 5.")
         except ValueError:
             print("Please enter a valid number.")
     
-    # Get user input for must-visit locations
+    # Get user input for must-visit locations (exactly 6)
     available_locations = tourist_places['Name'].tolist()
     print("\nAvailable tourist locations in Goa:")
     for i, loc in enumerate(available_locations[:20]):  # Show first 20 for brevity
         print(f"{i+1}. {loc}")
     
     must_visit_locations = []
-    print("\nPlease enter 6 must-visit locations (one at a time):")
+    print("\nPlease enter exactly 6 must-visit locations (one at a time):")
     while len(must_visit_locations) < 6:
-        loc = input(f"Enter location {len(must_visit_locations)+1}: ")
+        loc = input(f"Enter location {len(must_visit_locations)+1}/6: ")
         matched_loc = find_closest_match(loc, available_locations)
         if matched_loc:
             if matched_loc not in must_visit_locations:
@@ -1017,18 +1133,29 @@ if __name__ == "__main__":
         else:
             print("Location not found. Please try again.")
     
+    # Ask about vegetarian preference
+    while True:
+        veg_pref = input("\nDo you want vegetarian restaurants only? (y/n): ").lower().strip()
+        if veg_pref in ['y', 'n']:
+            vegetarian_only = veg_pref == 'y'
+            break
+        else:
+            print("Please enter 'y' for vegetarian only or 'n' for any restaurants.")
+    
     print("\nYour must-visit locations:")
     for i, loc in enumerate(must_visit_locations):
         print(f"{i+1}. {loc}")
+    print(f"Vegetarian preference: {'Vegetarian only' if vegetarian_only else 'Any restaurants'}")
     
-    # Generate multi-day itinerary
+    # Generate multi-day itinerary with vegetarian filter
     print("\nGenerating your optimized Goa itinerary...")
     all_itineraries = generate_multi_day_itinerary(
         num_days,
         must_visit_locations,
         bf_model, bf_scaler_X, bf_scaler_y,
         route_model, route_scaler,
-        loc_order_model, loc_order_scaler
+        loc_order_model, loc_order_scaler,
+        vegetarian_only
     )
     
     # Print the complete itinerary
